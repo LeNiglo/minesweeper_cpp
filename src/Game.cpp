@@ -10,7 +10,7 @@ Game::Game(char const *argv[])
 	this->mines = (mines > MAX_MINES ? MAX_MINES : (mines < MIN_MINES ? MIN_MINES : mines));
 	this->mines = (mines > width * height / 2 ? width * height / 2 - 1 : mines);
 	std::cout << "new Game with X: " << this->width << ", Y: " << this->height << ", mines: " << this->mines << std::endl;
-	this->window = new sf::RenderWindow(sf::VideoMode(this->width * CELL_SIZE, this->height * CELL_SIZE), "MineSweeper by LeNiglo", 0);
+	this->window = new sf::RenderWindow(sf::VideoMode(this->width * CELL_SIZE, HEADER_HEIGHT + this->height * CELL_SIZE), "MineSweeper by LeNiglo", 0);
 }
 
 Game::~Game()
@@ -52,11 +52,29 @@ void					Game::clean()
 void					Game::draw()
 {
 	this->board->draw(this->window);
+
+	if (!boost::logic::indeterminate(this->gameStatus)) {
+		sf::Font font;
+		font.loadFromFile("font.otf");
+
+		sf::Text text;
+		text.setColor(sf::Color::Black);
+		text.setFont(font);
+		text.setCharacterSize(CELL_SIZE * 2);
+		if (this->gameStatus) {
+			text.setString("VICTORY !");
+		} else if (!this->gameStatus) {
+			text.setString("YOU LOSE !");
+		}
+		sf::FloatRect textRect = text.getLocalBounds();
+		text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top  + textRect.height/2.0f);
+		text.setPosition(sf::Vector2f((this->width * CELL_SIZE) / 2.0f, HEADER_HEIGHT + (this->height * CELL_SIZE) / 2.0f));
+		window->draw(text);
+	}
 }
 
 bool					Game::loop()
 {
-	// TODO, replace by something relevant.
 	while (this->isRunning()) {
 		if (!this->handleEvents()) {
 			break;
@@ -85,8 +103,10 @@ bool					Game::handleEvents()
 				return false;
 			}
 		} else if (event.type == sf::Event::MouseButtonReleased) {
-			if (boost::logic::indeterminate(this->gameStatus)) {
-				std::pair<int, int> cell = Game::getPosOfCell(event.mouseButton.x, event.mouseButton.y);
+			if (event.mouseButton.y < HEADER_HEIGHT) {
+
+			} else if (boost::logic::indeterminate(this->gameStatus)) {
+				std::pair<int, int> cell = Game::getPosOfCell(event.mouseButton.x, event.mouseButton.y - HEADER_HEIGHT);
 				if (event.mouseButton.button == sf::Mouse::Right) {
 					// std::cout << "Right Clicked on Cell [" << cell.first << ", " << cell.second << "]" << std::endl;
 					this->board->markCell(cell);
@@ -114,11 +134,9 @@ bool					Game::handleEvents()
 	return true;
 }
 
-std::pair<int, int>		Game::getPosOfCell(int posX, int posY)
+std::pair<int, int>		Game::getPosOfCell(const int &posX, const int &posY)
 {
 	std::pair<int, int> pair;
-
-	posY -= HEADER_HEIGHT;
 
 	pair.first = posX / CELL_SIZE;
 	pair.second = posY / CELL_SIZE;

@@ -52,14 +52,14 @@ void								Board::draw(sf::RenderWindow *window)
 		for (int j = 0; j < this->height; j++) {
 			sf::RectangleShape rectangle(sf::Vector2f(CELL_SIZE - 4, CELL_SIZE - 4));
 			sf::Text text;
-			rectangle.setPosition(i * CELL_SIZE, j * CELL_SIZE);
+			rectangle.setPosition(i * CELL_SIZE, HEADER_HEIGHT + j * CELL_SIZE);
 			rectangle.setFillColor((i + j) % 2 ? sf::Color(250, 250, 250) : sf::Color(180, 180, 180));
 			rectangle.setOutlineThickness(2);
 			rectangle.setOutlineColor((i + j) % 2 ? sf::Color(180, 180, 180) : sf::Color(250, 250, 250));
 			window->draw(rectangle);
 
 			text.setFont(font);
-			text.setPosition(i * CELL_SIZE + CELL_SIZE / 4, j * CELL_SIZE + CELL_SIZE / 4);
+			text.setPosition(i * CELL_SIZE + CELL_SIZE / 4, HEADER_HEIGHT + j * CELL_SIZE + CELL_SIZE / 4);
 			text.setCharacterSize(CELL_SIZE / 2);
 
 			if (this->cells[i][j]->getDiscovered()) {
