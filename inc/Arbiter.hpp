@@ -8,6 +8,9 @@ class Arbiter {
 public:
 	Arbiter(Board*);
 	boost::logic::tribool		check();
+	int							getFlags(const bool&);
+	int							getFreeCells();
+	bool						hasFoundMines();
 private:
 	Board						*board;
 };

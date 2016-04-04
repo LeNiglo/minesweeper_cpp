@@ -34,6 +34,7 @@ void					Game::init()
 	this->board->init();
 	this->arbiter = new Arbiter(this->board);
 	this->window->setFramerateLimit(10);
+	this->sfClock.reset();
 }
 
 void					Game::clean()
@@ -52,12 +53,44 @@ void					Game::clean()
 
 void					Game::draw()
 {
+	sf::Font font;
+	font.loadFromFile("font.otf");
+
 	this->board->draw(this->window);
 
-	if (!boost::logic::indeterminate(this->gameStatus)) {
-		sf::Font font;
-		font.loadFromFile("font.otf");
+	sf::Text textTime;
+	textTime.setFont(font);
+	textTime.setCharacterSize(HEADER_HEIGHT - 10);
+	textTime.setString(std::to_string((int) this->sfClock.getElapsedTime().asSeconds()));
+	textTime.setColor(sf::Color::Black);
+	sf::FloatRect textRect = textTime.getLocalBounds();
+	textTime.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+	textTime.setPosition(sf::Vector2f(1 + 200 / 2.0f, HEADER_HEIGHT / 2.0f));
+	sf::RectangleShape rect1(sf::Vector2f(200, HEADER_HEIGHT - 2));
+	rect1.setPosition(sf::Vector2f(1, 1));
+	rect1.setFillColor(sf::Color(200, 200, 200));
 
+	this->window->draw(rect1);
+	this->window->draw(textTime);
+
+	int minesRemaining = this->mines - this->arbiter->getFlags(false);
+
+	sf::Text textMines;
+	textMines.setFont(font);
+	textMines.setCharacterSize(HEADER_HEIGHT - 10);
+	textMines.setString(std::to_string(minesRemaining));
+	textMines.setColor(sf::Color::Black);
+	textRect = textMines.getLocalBounds();
+	textMines.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+	textMines.setPosition(sf::Vector2f(this->width * CELL_SIZE - 201 + 200 / 2.0f, HEADER_HEIGHT / 2.0f));
+	sf::RectangleShape rect2(sf::Vector2f(200, HEADER_HEIGHT - 2));
+	rect2.setPosition(sf::Vector2f(this->width * CELL_SIZE - 201, 1));
+	rect2.setFillColor(sf::Color(200, 200, 200));
+
+	this->window->draw(rect2);
+	this->window->draw(textMines);
+
+	if (!boost::logic::indeterminate(this->gameStatus)) {
 		sf::Text text;
 		text.setColor(sf::Color::Black);
 		text.setFont(font);
@@ -68,7 +101,7 @@ void					Game::draw()
 			text.setString("YOU LOSE !");
 		}
 		sf::FloatRect textRect = text.getLocalBounds();
-		text.setOrigin(textRect.left + textRect.width/2.0f, textRect.top  + textRect.height/2.0f);
+		text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 		text.setPosition(sf::Vector2f((this->width * CELL_SIZE) / 2.0f, HEADER_HEIGHT + (this->height * CELL_SIZE) / 2.0f));
 		window->draw(text);
 	}
@@ -76,6 +109,7 @@ void					Game::draw()
 
 bool					Game::loop()
 {
+	this->sfClock.resume();
 	while (this->isRunning()) {
 		if (!this->handleEvents()) {
 			break;
@@ -129,6 +163,7 @@ bool					Game::handleEvents()
 					std::cout << "VICTORY !" << std::endl;
 					this->gameStatus = true;
 				}
+				this->sfClock.pause();
 			}
 		}
 	}

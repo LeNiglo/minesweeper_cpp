@@ -3,6 +3,7 @@
 
 # include "includes.h"
 # include "Arbiter.hpp"
+# include <sftools/Chronometer.hpp>
 
 class Game
 {
@@ -21,6 +22,7 @@ private:
 	int							height;
 	int							mines;
 	boost::logic::tribool		gameStatus;
+	sftools::Chronometer		sfClock;
 
 	Board						*board;
 	Arbiter						*arbiter;

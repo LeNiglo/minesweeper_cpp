@@ -12,6 +12,7 @@ You *MUST* provides parameters or it won't work at the moment.
 ## Requirements
 
  - SFML 2.X
+ - [sftools](http://mantognini.github.io/sftools/)
  - Boost (includes only)
 
 ## How To Play
@@ -26,9 +27,14 @@ You *MUST* provides parameters or it won't work at the moment.
 ## Improvements
 
  - [X] Win / Loose Display
- - [ ] Sprites for Mines and Flags
- - [ ] Timer
- - [ ] Display Header
+ - [X] Sprites for Mines and Flags
+ - [X] Timer
+ - [X] Display Header
  - [ ] Leaderboard
  - [ ] Default Parameters (easy / medium / advanced)
  - [ ] *(?)* Online leaderboard using Parse.com
+
+## Credits
+
+ - [IconFinder](https://www.iconfinder.com) for the Flag Sprite.
+ - [IGN](http://microsites.ign.com/rayman_timeline/) for the Mine Sprite.

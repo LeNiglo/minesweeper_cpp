@@ -46,7 +46,15 @@ void									Board::clean()
 void								Board::draw(sf::RenderWindow *window)
 {
 	sf::Font font;
+	sf::Texture textureMine;
+	sf::Texture textureFlag;
 	font.loadFromFile("font.otf");
+	textureMine.loadFromFile("mine.png");
+	textureFlag.loadFromFile("flag.png");
+	textureMine.setSmooth(true);
+	textureFlag.setSmooth(true);
+	textureMine.setRepeated(false);
+	textureFlag.setRepeated(false);
 
 	// Check if it needed to hover cells
 	std::vector<std::pair<int, int> > cellsToHover;
@@ -67,6 +75,8 @@ void								Board::draw(sf::RenderWindow *window)
 	for (int i = 0; i < this->width; i++) {
 		for (int j = 0; j < this->height; j++) {
 			sf::RectangleShape rectangle(sf::Vector2f(CELL_SIZE - 4, CELL_SIZE - 4));
+			sf::Sprite spriteMine;
+			sf::Sprite spriteFlag;
 			sf::Text text;
 
 			bool hoveredCell = false;
@@ -76,6 +86,9 @@ void								Board::draw(sf::RenderWindow *window)
 					break;
 				}
 			}
+
+			spriteMine.setTexture(textureMine);
+			spriteFlag.setTexture(textureFlag);
 
 			rectangle.setPosition(i * CELL_SIZE, HEADER_HEIGHT + j * CELL_SIZE);
 			rectangle.setOutlineThickness(2);
@@ -88,33 +101,35 @@ void								Board::draw(sf::RenderWindow *window)
 				rectangle.setOutlineColor((i + j) % 2 ? sf::Color(180, 180, 180) : sf::Color(250, 250, 250));
 			}
 
-			text.setFont(font);
-			text.setPosition(i * CELL_SIZE + CELL_SIZE / 4, HEADER_HEIGHT + j * CELL_SIZE + CELL_SIZE / 4);
-			text.setCharacterSize(CELL_SIZE / 2);
-
 			if (this->cells[i][j]->getDiscovered()) {
 				if (this->cells[i][j]->getValue() > 0) {
-					int colorShade = (hoveredCell ? 0 : 30) + 100 / this->cells[i][j]->getValue();
-					text.setColor(sf::Color(colorShade, colorShade, colorShade));
-
 					if (this->cells[i][j]->getMine()) {
-						text.setString("X");
-						text.setStyle(sf::Text::Bold);
-						text.setColor(sf::Color::Red);
+						spriteMine.setPosition(sf::Vector2f(i * CELL_SIZE, HEADER_HEIGHT + j * CELL_SIZE));
 					} else {
+						int colorShade = (hoveredCell ? 0 : 30) + 100 / this->cells[i][j]->getValue();
+						text.setFont(font);
+						text.setColor(sf::Color(colorShade, colorShade, colorShade));
+						text.setPosition(i * CELL_SIZE + CELL_SIZE / 4, HEADER_HEIGHT + j * CELL_SIZE + CELL_SIZE / 4);
+						text.setCharacterSize(CELL_SIZE / 2);
 						text.setString(std::to_string(this->cells[i][j]->getValue()));
 					}
-
 				} else {
 					rectangle.setFillColor(sf::Color(120, 120, 120));
 				}
 			} else if (boost::logic::indeterminate(this->cells[i][j]->getDiscovered())) {
-				text.setString("F");
-				text.setColor(sf::Color::Blue);
+				spriteFlag.setPosition(sf::Vector2f(i * CELL_SIZE, HEADER_HEIGHT + j * CELL_SIZE));
 			}
 
 			window->draw(rectangle);
-			window->draw(text);
+			if (spriteMine.getPosition().y != 0) {
+				window->draw(spriteMine);
+			}
+			if (spriteFlag.getPosition().y != 0) {
+				window->draw(spriteFlag);
+			}
+			if (text.getPosition().y != 0) {
+				window->draw(text);
+			}
 		}
 	}
 }
