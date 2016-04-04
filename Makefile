@@ -1,14 +1,15 @@
 NAME		= minesweeper
 
-SRCS		= main.cpp \
-			  Game.cpp \
-			  Board.cpp \
-			  Cell.cpp
+SRCS		= src/main.cpp \
+			  src/Game.cpp \
+			  src/Board.cpp \
+			  src/Arbiter.cpp \
+			  src/Cell.cpp
 
 OBJS		= $(SRCS:.cpp=.o)
 
 LIBDIR		= -L/usr/local/lib/
-INCDIR		= -I/usr/local/include/
+INCDIR		= -I/usr/local/include/ -I./inc/
 
 CXX			= g++
 CXXFLAGS	+= -W -Wall -Wextra -Werror -pedantic

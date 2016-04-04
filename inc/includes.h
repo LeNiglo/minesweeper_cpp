@@ -16,4 +16,6 @@
 
 # define CELL_SIZE 75
 
+# define HEADER_HEIGHT 0
+
 #endif /* end of include guard: _INCLUDES_H_ */

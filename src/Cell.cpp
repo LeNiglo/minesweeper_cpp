@@ -2,7 +2,9 @@
 
 Cell::Cell(const int &x, const int &y)
 {
-	std::cout << "New cell at [" << x << ", " << y << "]" << std::endl;
+	(void) x;
+	(void) y;
+	// std::cout << "New cell at [" << x << ", " << y << "]" << std::endl;
 	this->mine = false;
 	this->value = 0;
 	this->discovered = false;

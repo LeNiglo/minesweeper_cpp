@@ -50,10 +50,12 @@ void								Board::draw(sf::RenderWindow *window)
 
 	for (int i = 0; i < this->width; i++) {
 		for (int j = 0; j < this->height; j++) {
-			sf::RectangleShape rectangle(sf::Vector2f(CELL_SIZE, CELL_SIZE));
+			sf::RectangleShape rectangle(sf::Vector2f(CELL_SIZE - 4, CELL_SIZE - 4));
 			sf::Text text;
 			rectangle.setPosition(i * CELL_SIZE, j * CELL_SIZE);
 			rectangle.setFillColor((i + j) % 2 ? sf::Color(250, 250, 250) : sf::Color(180, 180, 180));
+			rectangle.setOutlineThickness(2);
+			rectangle.setOutlineColor((i + j) % 2 ? sf::Color(180, 180, 180) : sf::Color(250, 250, 250));
 			window->draw(rectangle);
 
 			text.setFont(font);
@@ -64,7 +66,7 @@ void								Board::draw(sf::RenderWindow *window)
 				if (this->cells[i][j]->getValue() > 0) {
 					text.setColor(sf::Color(150 / this->cells[i][j]->getValue(), 150 / this->cells[i][j]->getValue(), 150 / this->cells[i][j]->getValue()));
 
-					if (this->cells[i][j]->getMine() == true) {
+					if (this->cells[i][j]->getMine()) {
 						text.setString("X");
 						text.setStyle(sf::Text::Bold);
 						text.setColor(sf::Color::Red);
@@ -86,11 +88,27 @@ void								Board::draw(sf::RenderWindow *window)
 	}
 }
 
+void								Board::revealMines()
+{
+	for (int i = 0; i < this->width; i++) {
+		for (int j = 0; j < this->height; j++) {
+			if (this->cells[i][j]->getMine() && (this->cells[i][j]->getDiscovered() || !this->cells[i][j]->getDiscovered())) {
+				this->cells[i][j]->setDiscovered(true);
+			}
+		}
+	}
+}
+
 bool								Board::discoverCell(const std::pair<int, int> &cell)
 {
 	if (cell.first >= 0 && cell.first < this->width && cell.second >= 0 && cell.second < this->height) {
-		if (!this->cells[cell.first][cell.second]->getDiscovered() || boost::logic::indeterminate(this->cells[cell.first][cell.second]->getDiscovered())) {
+		if (!this->cells[cell.first][cell.second]->getDiscovered()) {
 			this->cells[cell.first][cell.second]->setDiscovered(true);
+
+			if (this->cells[cell.first][cell.second]->getMine()) {
+				std::cout << "BOOOOOOOOM !" << std::endl;
+			}
+
 			if (this->cells[cell.first][cell.second]->getValue() == 0) {
 				for (int i = -1; i <= 1; i++) {
 					for (int j = -1; j <= 1; j++) {
@@ -115,12 +133,61 @@ bool								Board::markCell(const std::pair<int, int> &cell)
 		if (!this->cells[cell.first][cell.second]->getDiscovered()) {
 			this->cells[cell.first][cell.second]->setDiscovered(boost::logic::indeterminate);
 			return true;
+		} else if (boost::logic::indeterminate(this->cells[cell.first][cell.second]->getDiscovered())) {
+			this->cells[cell.first][cell.second]->setDiscovered(false);
+			return true;
+		} else {
+			return this->testCell(cell);
+		}
+	} else {
+		return false;
+	}
+}
+
+bool								Board::testCell(const std::pair<int, int> &cell)
+{
+	if (cell.first >= 0 && cell.first < this->width && cell.second >= 0 && cell.second < this->height) {
+		if (this->cells[cell.first][cell.second]->getDiscovered()) {
+
+			int flagsNear = 0;
+
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					if (cell.first + i >= 0 && cell.first + i < this->width && cell.second + j >= 0 && cell.second + j < this->height) {
+						if (boost::logic::indeterminate(this->cells[cell.first + i][cell.second + j]->getDiscovered())) {
+							++flagsNear;
+						}
+					}
+				}
+			}
+
+			if (flagsNear == this->cells[cell.first][cell.second]->getValue()) {
+				for (int i = -1; i <= 1; i++) {
+					for (int j = -1; j <= 1; j++) {
+						std::pair<int, int> newCell(cell.first + i, cell.second + j);
+						this->discoverCell(newCell);
+					}
+				}
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
 	} else {
 		return false;
 	}
+}
+
+int									Board::getMines() const
+{
+	return this->mines;
+}
+
+std::vector<std::vector<Cell*> > 	Board::getCells() const
+{
+	return this->cells;
 }
 
 void								Board::putMines()
@@ -133,7 +200,7 @@ void								Board::putMines()
 		pos.second = rand() % this->height;
 
 		if (this->cells[pos.first][pos.second]->getMine() == false) {
-			std::cout << "Putting mine at [" << pos.first << ", " << pos.second << "]" << std::endl;
+			// std::cout << "Putting mine at [" << pos.first << ", " << pos.second << "]" << std::endl;
 			this->cells[pos.first][pos.second]->setMine(true);
 			++putMines;
 		}

@@ -12,8 +12,12 @@ public:
 	bool									init();
 	void									clean();
 	void									draw(sf::RenderWindow*);
+	void									revealMines();
 	bool									discoverCell(const std::pair<int, int>&);
 	bool									markCell(const std::pair<int, int>&);
+	bool									testCell(const std::pair<int, int>&);
+	int										getMines() const;
+	std::vector<std::vector<Cell*> > 		getCells() const;
 private:
 	void									putMines();
 	void									calcNear();
