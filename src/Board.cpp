@@ -48,15 +48,45 @@ void								Board::draw(sf::RenderWindow *window)
 	sf::Font font;
 	font.loadFromFile("font.otf");
 
+	// Check if it needed to hover cells
+	std::vector<std::pair<int, int> > cellsToHover;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) || sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
+		sf::Vector2i mousePos = sf::Mouse::getPosition(*window);
+
+		if (mousePos.x >= 0 && mousePos.x < this->width * CELL_SIZE && mousePos.y >= HEADER_HEIGHT && mousePos.y < HEADER_HEIGHT + this->height * CELL_SIZE) {
+			std::pair<int, int> cell = Cell::getPosOfCell(mousePos.x, mousePos.y - HEADER_HEIGHT);
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					std::pair<int, int> newCell(cell.first + i, cell.second + j);
+					cellsToHover.push_back(newCell);
+				}
+			}
+		}
+	}
+
 	for (int i = 0; i < this->width; i++) {
 		for (int j = 0; j < this->height; j++) {
 			sf::RectangleShape rectangle(sf::Vector2f(CELL_SIZE - 4, CELL_SIZE - 4));
 			sf::Text text;
+
+			bool hoveredCell = false;
+			for (size_t inc = 0; inc < cellsToHover.size(); inc++) {
+				if (cellsToHover[inc].first == i && cellsToHover[inc].second == j) {
+					hoveredCell = true;
+					break;
+				}
+			}
+
 			rectangle.setPosition(i * CELL_SIZE, HEADER_HEIGHT + j * CELL_SIZE);
-			rectangle.setFillColor((i + j) % 2 ? sf::Color(250, 250, 250) : sf::Color(180, 180, 180));
 			rectangle.setOutlineThickness(2);
-			rectangle.setOutlineColor((i + j) % 2 ? sf::Color(180, 180, 180) : sf::Color(250, 250, 250));
-			window->draw(rectangle);
+
+			if (hoveredCell && !this->cells[i][j]->getDiscovered()) {
+				rectangle.setFillColor(sf::Color(160, 160, 160));
+				rectangle.setOutlineColor(sf::Color(20, 20, 20));
+			} else {
+				rectangle.setFillColor((i + j) % 2 ? sf::Color(250, 250, 250) : sf::Color(200, 200, 200));
+				rectangle.setOutlineColor((i + j) % 2 ? sf::Color(180, 180, 180) : sf::Color(250, 250, 250));
+			}
 
 			text.setFont(font);
 			text.setPosition(i * CELL_SIZE + CELL_SIZE / 4, HEADER_HEIGHT + j * CELL_SIZE + CELL_SIZE / 4);
@@ -64,7 +94,8 @@ void								Board::draw(sf::RenderWindow *window)
 
 			if (this->cells[i][j]->getDiscovered()) {
 				if (this->cells[i][j]->getValue() > 0) {
-					text.setColor(sf::Color(150 / this->cells[i][j]->getValue(), 150 / this->cells[i][j]->getValue(), 150 / this->cells[i][j]->getValue()));
+					int colorShade = (hoveredCell ? 0 : 30) + 100 / this->cells[i][j]->getValue();
+					text.setColor(sf::Color(colorShade, colorShade, colorShade));
 
 					if (this->cells[i][j]->getMine()) {
 						text.setString("X");

@@ -49,3 +49,13 @@ int						Cell::getY() const
 {
 	return this->y;
 }
+
+std::pair<int, int>		Cell::getPosOfCell(const int &posX, const int &posY)
+{
+	std::pair<int, int> pair;
+
+	pair.first = posX / CELL_SIZE;
+	pair.second = posY / CELL_SIZE;
+
+	return pair;
+}

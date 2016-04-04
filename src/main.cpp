@@ -3,7 +3,7 @@
 int main(int argc, char const *argv[])
 {
 	if (argc < 4) {
-		std::cerr << "USAGE: " << std::endl << argv[0] << " X Y NB" << std::endl;
+		std::cerr << "USAGE: " << std::endl << argv[0] << " SIZE_X SIZE_Y NB_MINES" << std::endl;
 		return EXIT_FAILURE;
 	}
 

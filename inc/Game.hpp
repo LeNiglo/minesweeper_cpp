@@ -15,7 +15,6 @@ public:
 	void						draw();
 	bool						loop();
 	bool						handleEvents();
-	static std::pair<int, int>	getPosOfCell(const int &posX, const int &posY);
 private:
 	sf::RenderWindow			*window;
 	int							width;

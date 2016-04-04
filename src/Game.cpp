@@ -9,7 +9,8 @@ Game::Game(char const *argv[])
 	this->mines = atoi(argv[3]);
 	this->mines = (mines > MAX_MINES ? MAX_MINES : (mines < MIN_MINES ? MIN_MINES : mines));
 	this->mines = (mines > width * height / 2 ? width * height / 2 - 1 : mines);
-	std::cout << "new Game with X: " << this->width << ", Y: " << this->height << ", mines: " << this->mines << std::endl;
+	std::cout << "New Game with SIZE_X: " << this->width << ", SIZE_Y: " << this->height << ", NB_MINES: " << this->mines << std::endl
+	<< "Window size: " << (this->width * CELL_SIZE) << "x" << (HEADER_HEIGHT + this->height * CELL_SIZE) << std::endl;
 	this->window = new sf::RenderWindow(sf::VideoMode(this->width * CELL_SIZE, HEADER_HEIGHT + this->height * CELL_SIZE), "MineSweeper by LeNiglo", 0);
 }
 
@@ -106,7 +107,7 @@ bool					Game::handleEvents()
 			if (event.mouseButton.y < HEADER_HEIGHT) {
 
 			} else if (boost::logic::indeterminate(this->gameStatus)) {
-				std::pair<int, int> cell = Game::getPosOfCell(event.mouseButton.x, event.mouseButton.y - HEADER_HEIGHT);
+				std::pair<int, int> cell = Cell::getPosOfCell(event.mouseButton.x, event.mouseButton.y - HEADER_HEIGHT);
 				if (event.mouseButton.button == sf::Mouse::Right) {
 					// std::cout << "Right Clicked on Cell [" << cell.first << ", " << cell.second << "]" << std::endl;
 					this->board->markCell(cell);
@@ -132,14 +133,4 @@ bool					Game::handleEvents()
 		}
 	}
 	return true;
-}
-
-std::pair<int, int>		Game::getPosOfCell(const int &posX, const int &posY)
-{
-	std::pair<int, int> pair;
-
-	pair.first = posX / CELL_SIZE;
-	pair.second = posY / CELL_SIZE;
-
-	return pair;
 }
