@@ -91,8 +91,12 @@ void					Game::draw()
 	this->window->draw(textMines);
 
 	if (!boost::logic::indeterminate(this->gameStatus)) {
+		sf::RectangleShape rect3(sf::Vector2f(this->window->getSize().x, this->window->getSize().y));
+		rect3.setFillColor(sf::Color(0, 0, 0, 100));
+		this->window->draw(rect3);
+
 		sf::Text text;
-		text.setColor(sf::Color::Black);
+		text.setColor(sf::Color::White);
 		text.setFont(font);
 		text.setCharacterSize(CELL_SIZE * 2);
 		if (this->gameStatus) {

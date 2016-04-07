@@ -17,7 +17,7 @@ boost::logic::tribool			Arbiter::check()
 		return false;
 	}
 
-	if (flags == mines && freeCells == 0) {
+	if ((flags + freeCells) == mines) {
 		// WIN CONDITION
 		return true;
 	}
