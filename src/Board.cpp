@@ -108,7 +108,7 @@ void								Board::draw(sf::RenderWindow *window)
 					} else {
 						int colorShade = (hoveredCell ? 0 : 30) + 100 / this->cells[i][j]->getValue();
 						text.setFont(font);
-						text.setColor(sf::Color(colorShade, colorShade, colorShade));
+						text.setFillColor(sf::Color(colorShade, colorShade, colorShade));
 						text.setPosition(i * CELL_SIZE + CELL_SIZE / 4, HEADER_HEIGHT + j * CELL_SIZE + CELL_SIZE / 4);
 						text.setCharacterSize(CELL_SIZE / 2);
 						text.setString(std::to_string(this->cells[i][j]->getValue()));

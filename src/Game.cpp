@@ -62,7 +62,7 @@ void					Game::draw()
 	textTime.setFont(font);
 	textTime.setCharacterSize(HEADER_HEIGHT - 10);
 	textTime.setString(std::to_string((int) this->sfClock.getElapsedTime().asSeconds()));
-	textTime.setColor(sf::Color::Black);
+	textTime.setFillColor(sf::Color::Black);
 	sf::FloatRect textRect = textTime.getLocalBounds();
 	textTime.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 	textTime.setPosition(sf::Vector2f(1 + 200 / 2.0f, HEADER_HEIGHT / 2.0f));
@@ -79,7 +79,7 @@ void					Game::draw()
 	textMines.setFont(font);
 	textMines.setCharacterSize(HEADER_HEIGHT - 10);
 	textMines.setString(std::to_string(minesRemaining));
-	textMines.setColor(sf::Color::Black);
+	textMines.setFillColor(sf::Color::Black);
 	textRect = textMines.getLocalBounds();
 	textMines.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 	textMines.setPosition(sf::Vector2f(this->width * CELL_SIZE - 201 + 200 / 2.0f, HEADER_HEIGHT / 2.0f));
@@ -96,7 +96,7 @@ void					Game::draw()
 		this->window->draw(rect3);
 
 		sf::Text text;
-		text.setColor(sf::Color::White);
+		text.setFillColor(sf::Color::White);
 		text.setFont(font);
 		text.setCharacterSize(CELL_SIZE * 2);
 		if (this->gameStatus) {

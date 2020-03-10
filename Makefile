@@ -11,7 +11,7 @@ OBJS		= $(SRCS:.cpp=.o)
 LIBDIR		= -L/usr/local/lib/
 INCDIR		= -I/usr/local/include/ -I./inc/
 
-CXX			= g++
+CXX		= g++
 CXXFLAGS	+= -W -Wall -Wextra -Werror -pedantic
 CXXFLAGS	+= $(INCDIR)
 CXXFLAGS	+= -std=c++11
